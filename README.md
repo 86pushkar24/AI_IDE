@@ -111,6 +111,7 @@ npm install
 Create a `.env` file in the project root (same folder as `package.json`):
 ```env
 GEMINI_API_KEY=your-gemini-key
+GEMINI_MODEL=gemini-1.5-flash
 PING_URL=https://your-render-domain.onrender.com
 KEEPALIVE_INTERVAL_MS=30000
 PISTON_API_URL=https://emkc.org/api/v2/piston/execute

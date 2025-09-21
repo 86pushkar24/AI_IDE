@@ -53,6 +53,7 @@ const io = new Server(server, {
 
 // Google Gemini AI configuration
 const apiKey = process.env.GEMINI_API_KEY;              // Load Gemini key from env
+const geminiModel = process.env.GEMINI_MODEL || 'gemini-1.5-flash'; // Model to use for AI review
 const genAI = new GoogleGenerativeAI(apiKey);    // Initialize Gemini AI client
 
 // Default versions for supported programming languages
@@ -211,11 +212,14 @@ io.on('connection', (socket) => {
      * Uses Google Gemini AI to analyze and review code
      */
     socket.on("getAIReview", async ({ roomId, code }) => {
-        try {
-            // Initialize Gemini AI model
-            const model = genAI.getGenerativeModel({ model: "models/gemini-2.0-flash" });
+        if (!apiKey) {
+            io.to(roomId).emit("AIReview", "AI review is not configured. Add GEMINI_API_KEY on the server.");
+            return;
+        }
 
-            // Create prompt for AI code review
+        try {
+            const model = genAI.getGenerativeModel({ model: geminiModel });
+
             const prompt = `
             You're an expert code reviewer of the language "${detectLang(code)}" and love to give code suggestions. 
             Generate a brief review of the code "${code}".
@@ -223,16 +227,13 @@ io.on('connection', (socket) => {
             Give the response in proper format so that it comes in bulets
             `;
 
-            // Generate AI review
             const result = await model.generateContent(prompt);  // Send prompt to AI
             const response = result.response;                    // Extract response
             const text = response.text();                        // Get text content
 
-            // Broadcast AI review to all users in room
             io.to(roomId).emit("AIReview", text);
-        }
-        catch {
-            // Send error message if AI review fails
+        } catch (error) {
+            console.error("AI review error:", error?.response?.error || error.message || error);
             io.to(roomId).emit("AIReview", "Unable to review currently please try later");
         }
     })
