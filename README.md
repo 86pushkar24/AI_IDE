@@ -117,7 +117,7 @@ PISTON_API_URL=https://emkc.org/api/v2/piston/execute
 PORT=5001
 ```
 
-> On Render you’ll set the same variables in the dashboard. Leave `PING_URL` empty until after the first deploy, then update it to your Render URL and redeploy.
+> On Render you’ll set the same variables in the dashboard. Leave `PING_URL` empty until after the first deploy, then update it to your Render URL and redeploy. The `.env` file is git-ignored so secrets stay out of the repo, so every fresh clone needs to recreate it before running the app.
 
 ### 4. Run the Servers
 
@@ -148,7 +148,7 @@ Visit `http://localhost:5173` to work with hot reload, while the backend runs on
 │   └── src/
 ├── index.js
 ├── package.json
-├── .env
+├── .env (local only, git-ignored)
 └── README.md
 ```
 
