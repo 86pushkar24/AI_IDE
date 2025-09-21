@@ -5,6 +5,7 @@ import path from 'path';                         // Built-in path utilities for 
 import axios from 'axios';                       // HTTP client for making API requests
 import cors from 'cors';                         // Middleware for handling Cross-Origin Resource Sharing
 import dotenv from 'dotenv'                      // Load environment variables from .env file
+import { fileURLToPath } from 'url';              // Resolve file paths in ES modules
 dotenv.config();                                 // Initialize dotenv to read environment variables
 import { GoogleGenerativeAI } from "@google/generative-ai"; // Google's Gemini AI SDK
 
@@ -251,14 +252,16 @@ io.on('connection', (socket) => {
 
 // Server configuration
 const PORT = process.env.PORT || 5001;                      // Use environment PORT or default 5001
-const __dirname = path.resolve();                           // Get current directory path
+const __filename = fileURLToPath(import.meta.url);           // Current file path
+const __dirname = path.dirname(__filename);                 // Directory containing this file
+const distPath = path.join(__dirname, '../frontend/dist');  // Path to built frontend assets
 
 // Serve static files from frontend build directory
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+app.use(express.static(distPath));
 
 // Catch-all route to serve React app for any unmatched routes (SPA routing)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html')); // Serve index.html for all routes
+    res.sendFile(path.join(distPath, 'index.html')); // Serve index.html for all routes
 });
 
 // Start the server
