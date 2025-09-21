@@ -1,6 +1,6 @@
 # **AI Assisted Realtime IDE**
 
-Here is the web app: [https://ai-ide-jofv.onrender.com/](https://ai-assisted-realtime-ide.onrender.com/)
+Here is the web app: [https://ai-ide-jofv.onrender.com](https://ai-ide-jofv.onrender.com)
 
 ---
 
@@ -67,13 +67,12 @@ Use AI assistance to speed up debugging, optimize your code, improve readability
 
 ## 🛠️ Tech Stack
 
-| Layer       | Technologies                                      |
-|-------------|---------------------------------------------------|
-| **Frontend**| React.js, JavaScript, CSS, Socket.IO              |
-| **Backend** | Node.js, Express.js, Socket.IO                    |
-| **APIs Used** | [Piston API](https://github.com/engineer-man/piston), [Gemini API](https://ai.google.dev/) |
-| **Others**  | Vite, Nodemon, Axios                              |
-
+| Layer         | Technologies                                      |
+|---------------|---------------------------------------------------|
+| **Frontend**  | React, Vite, Socket.IO client, Monaco editor      |
+| **Backend**   | Node.js (ESM), Express, Socket.IO, Axios          |
+| **AI & Judge**| [Gemini API](https://ai.google.dev/), [Piston API](https://github.com/engineer-man/piston) |
+| **Utilities** | dotenv, Nodemon (dev)                             |
 
 ---
 
@@ -90,7 +89,7 @@ Use AI assistance to speed up debugging, optimize your code, improve readability
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/saurav6719/AI-assisted-realtime_IDE.git
+git clone https://github.com/86pushkar24/AI-assisted-realtime_IDE.git
 ```
 
 ### 2. Install Dependencies
@@ -107,21 +106,34 @@ cd ../backend
 npm install
 ```
 
-### 3. Run the Servers
+### 3. Configure Environment
+
+Create a `.env` file in the project root (same folder as `package.json`):
+```env
+GEMINI_API_KEY=your-gemini-key
+PING_URL=https://your-render-domain.onrender.com
+KEEPALIVE_INTERVAL_MS=30000
+PISTON_API_URL=https://emkc.org/api/v2/piston/execute
+PORT=5001
+```
+
+> On Render you’ll set the same variables in the dashboard. Leave `PING_URL` empty until after the first deploy, then update it to your Render URL and redeploy.
+
+### 4. Run the Servers
 
 **Start Backend:**
 ```bash
-npm run dev
+npm start
 ```
 
-**Start Frontend:**
+This uses the root `package.json` start script (`node backend/index.js`) and serves the built frontend from `frontend/dist`.
+
+**During development**, you can run the frontend separately:
 ```bash
-cd ../frontend
+cd frontend
 npm run dev
 ```
-
-Open your browser and visit:  
-`http://localhost:5173`
+Visit `http://localhost:5173` to work with hot reload, while the backend runs on `http://localhost:5001`.
 
 ---
 
@@ -129,14 +141,25 @@ Open your browser and visit:
 
 ```
 .
-├── frontend
-│   └── src/
-│       ├── main.jsx
-│       └── App.jsx
 ├── backend
 │   └── index.js
-├── README.md
+├── frontend
+│   ├── dist/
+│   └── src/
+├── index.js
+├── package.json
+├── .env
+└── README.md
 ```
+
+---
+
+## 📈 Deployment Notes
+
+- Render Build Command: `npm install && npm run build`
+- Render Start Command: `npm start`
+- Make sure `frontend/src/App.jsx` points Socket.IO to the deployed backend URL or uses a `VITE_SOCKET_SERVER_URL`.
+- After Render assigns the production URL, update `PING_URL` in the environment variables and trigger a redeploy so the keep-alive ping uses the live domain.
 
 ---
 
